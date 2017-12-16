@@ -11,7 +11,11 @@ main(List<String> arguments) async {
         'dscript: Dart SDK found at ${sdk.sdkPath} with version ${await sdk.version}');
   }
 
-  final Iterable<String> pubspec = await extractPubspec(options.script);
+  Iterable<String> pubspec = await extractPubspec(options.script);
+
+  if(pubspec == null || pubspec.length == 0) {
+    pubspec = <String>['name: a_dart_script'];
+  }
 
   final ScriptRunner runner = await ScriptRunner.make(options, sdk, pubspec);
 

@@ -64,5 +64,7 @@ Future<UnmodifiableListView<String>> extractPubspec(String scriptFilename) async
     }
   }
 
+  if(pubspec == null) return null;
+
   return new UnmodifiableListView<String>(pubspec);
 }
