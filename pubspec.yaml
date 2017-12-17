@@ -1,6 +1,6 @@
 name: dscript
-description: A sample command-line application.
-version: 0.0.1
+description: Execute standalone Dart shell scripts
+version: 1.0.0
 homepage: https://github.com/tejainece/dscript
 author: Ravi Teja Gudapati <tejainece@gmail.com>
 
