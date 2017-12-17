@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.3
+
+- Moved dartx LICENSE to root folder
+
 ## 1.0.2
 
 - Attribution to mezoni
