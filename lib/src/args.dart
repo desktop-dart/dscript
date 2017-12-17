@@ -64,6 +64,7 @@ class Args {
       if (i != (arguments.length - 1)) {
         args = new UnmodifiableListView<String>(arguments.sublist(i + 1));
       }
+      break;
     }
 
     if (script == null) throw new Exception('Script not provided!');
