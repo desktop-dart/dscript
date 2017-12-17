@@ -50,7 +50,6 @@ class ScriptRunner {
     final StreamSubscription stdinSub =
         stdin.listen((List<int> d) => process.stdin.add(d));
 
-
     final int exitCode = await process.exitCode;
 
     final futures = <Future>[];
@@ -80,7 +79,6 @@ class Project {
 
   Project(this.projectDir);
 
-  Future pubGet({DartSdk withSdk}) async {
-    await withSdk.pubGet(workingDir: projectDir);
-  }
+  Future<PubGetResult> pubGet({DartSdk withSdk}) async =>
+      withSdk.pubGet(workingDir: projectDir);
 }

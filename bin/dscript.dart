@@ -1,5 +1,6 @@
 import "dart:io";
 import 'package:dscript/dscript.dart';
+import 'dart:collection';
 
 main(List<String> arguments) async {
   final options = new Args.parse(arguments);
@@ -11,19 +12,37 @@ main(List<String> arguments) async {
         'dscript: Dart SDK found at ${sdk.sdkPath} with version ${await sdk.version}');
   }
 
-  Iterable<String> pubspec = await extractPubspec(options.script);
+  UnmodifiableListView<String> pubspec = await extractPubspec(options.script);
 
-  if(pubspec == null || pubspec.length == 0) {
-    pubspec = <String>['name: a_dart_script'];
+  if (pubspec == null || pubspec.length == 0) {
+    if (options.verbose) {
+      stderr.writeln(
+          'dscript: Embedded pubspec not found in script. Providing defualt pubspec');
+    }
+    pubspec = new UnmodifiableListView<String>(<String>['name: a_dart_script']);
+  } else {
+    if (options.verbose) {
+      stderr.writeln('dscript: Embedded pubspec found in script');
+    }
   }
 
   final ScriptRunner runner = await ScriptRunner.make(options, sdk, pubspec);
 
   if (options.verbose) {
-    stderr.writeln('dscript: Temporary project path at ${runner.tempProjectDir}');
+    stderr
+        .writeln('dscript: Temporary project path at ${runner.tempProjectDir}');
   }
 
-  await runner.createProject();
+  try {
+    await runner.createProject();
+  } on PubGetException catch (e) {
+    stderr.writeln(
+        'dscript: Running "pub get" failed with exit code ${e.exitCode}!');
+    if (options.verbose) {
+      stderr.writeln(e.stderr);
+    }
+    exit(1);
+  }
 
   final int exitCode = await runner.exec();
 
@@ -33,9 +52,7 @@ main(List<String> arguments) async {
     }
     try {
       await new Directory(runner.tempProjectDir).delete(recursive: true);
-    } finally {
-
-    }
+    } finally {}
   }
 
   if (options.verbose) {

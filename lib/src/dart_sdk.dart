@@ -1,13 +1,16 @@
 import "dart:io";
 import 'dart:async';
 import 'package:path/path.dart' as p;
+import 'dart:convert';
 
 abstract class DartSdk {
   factory DartSdk.detect() => new DetectedDartSdk.detect();
 
-  ProcessResult pubGet({String workingDir});
+  FutureOr<PubGetResult> pubGet({String workingDir});
 
   Future<String> get versionString;
+
+  Future<String> get version;
 }
 
 class DartSdkInPath {}
@@ -51,11 +54,18 @@ class DetectedDartSdk implements DartSdk {
   // TODO create it during construction
   String get pubPath => p.join(sdkPath, 'bin', 'pub');
 
-  ProcessResult pub(List<String> arguments, {String workingDir}) =>
-      Process.runSync(pubPath, arguments, workingDirectory: workingDir);
+  Future<ProcessResult> pub(List<String> arguments, {String workingDir}) =>
+      Process.run(pubPath, arguments, workingDirectory: workingDir);
 
-  ProcessResult pubGet({String workingDir}) =>
-      pub(<String>['get'], workingDir: workingDir);
+  Future<PubGetResult> pubGet({String workingDir}) async {
+    final ProcessResult res =
+        await pub(<String>['get'], workingDir: workingDir);
+    if (res.exitCode == 0) {
+      return new PubGetResult(res.stdout);
+    } else {
+      throw new PubGetException(res.exitCode, res.stdout, res.stderr);
+    }
+  }
 
   Future<String> get versionString async {
     final ProcessResult res =
@@ -75,3 +85,43 @@ class DetectedDartSdk implements DartSdk {
 }
 
 final Exception dartSdkNotFound = new Exception('Dart SDK not found!');
+
+class DepInfo {
+  final String name;
+
+  final String version;
+
+  const DepInfo(this.name, this.version);
+}
+
+class PubGetResult {
+  final String outlog;
+
+  PubGetResult(this.outlog);
+
+  List<DepInfo> get added => new LineSplitter()
+      .convert(outlog)
+      .where((String line) => line.startsWith('+ '))
+      .map((String line) => line.split(' '))
+      .where((List<String> parts) => parts.length == 3)
+      .map((List<String> parts) => new DepInfo(parts[1], parts[2]))
+      .toList();
+
+  List<DepInfo> get removed => new LineSplitter()
+      .convert(outlog)
+      .where((String line) => line.startsWith('- '))
+      .map((String line) => line.split(' '))
+      .where((List<String> parts) => parts.length == 3)
+      .map((List<String> parts) => new DepInfo(parts[1], parts[2]))
+      .toList();
+}
+
+class PubGetException {
+  final int exitCode;
+
+  final String stdout;
+
+  final String stderr;
+
+  PubGetException(this.exitCode, this.stdout, this.stderr);
+}
