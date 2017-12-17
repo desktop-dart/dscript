@@ -68,6 +68,8 @@ main(List<String> arguments) async {
   exit(exitCode);
 }
 
+const String version = '1.0.1';
+
 void printHelp() {
   print('dscript: Executes standalone Dart shell scripts.');
   print('');
@@ -86,7 +88,7 @@ void printHelp() {
 
 bool probeSubCommands(List<String> args) {
   if (args.length == 0) {
-    print('Version: 1.0.0');
+    print('Version: $version');
     print('');
     printHelp();
     return true;
@@ -94,7 +96,7 @@ bool probeSubCommands(List<String> args) {
 
   switch (args[0]) {
     case 'version':
-      print('1.0.0');
+      print(version);
       return true;
     case 'help':
       printHelp();

@@ -11,7 +11,8 @@ enum _State {
 }
 
 /// Extracts pubspec embedded in dscript
-Future<UnmodifiableListView<String>> extractPubspec(String scriptFilename) async {
+Future<UnmodifiableListView<String>> extractPubspec(
+    String scriptFilename) async {
   final file = new File(scriptFilename);
 
   if (!file.existsSync()) {
@@ -64,7 +65,7 @@ Future<UnmodifiableListView<String>> extractPubspec(String scriptFilename) async
     }
   }
 
-  if(pubspec == null) return null;
+  if (pubspec == null) return null;
 
   return new UnmodifiableListView<String>(pubspec);
 }

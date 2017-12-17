@@ -199,7 +199,7 @@ Shebangs can be used to execute a Dart script directly.
 
 **say_hello.dart**
 ```dart
-#! /home/teja/.pub-cache/bin/dscript
+#! /usr/bin/env dscript
 
 main() {
   print('Hello!');

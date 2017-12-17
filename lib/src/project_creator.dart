@@ -26,7 +26,7 @@ class ProjectCreator {
   Future createProjectDir() async {
     final directory = new Directory(projectDir);
 
-    if(await directory.exists()) {
+    if (await directory.exists()) {
       return;
     }
 
