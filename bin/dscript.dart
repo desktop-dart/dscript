@@ -68,7 +68,7 @@ main(List<String> arguments) async {
   exit(exitCode);
 }
 
-const String version = '1.0.1';
+const String version = '1.0.2';
 
 void printHelp() {
   print('dscript: Executes standalone Dart shell scripts.');

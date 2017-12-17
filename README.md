@@ -2,6 +2,8 @@
 
 Execute standalone Dart shell scripts
 
+**Note**: Fork of [mezoni](https://github.com/mezoni)'s [dartx](https://github.com/mezoni/dartx). Special thanks to him!
+
 # Installation
 
 `dscript` can be using pub:
