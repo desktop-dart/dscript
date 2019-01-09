@@ -4,7 +4,7 @@ import 'package:path/path.dart' as p;
 import 'dart:convert';
 
 abstract class DartSdk {
-  factory DartSdk.detect() => new DetectedDartSdk.detect();
+  factory DartSdk.detect() => DetectedDartSdk.detect();
 
   FutureOr<PubGetResult> pubGet({String workingDir});
 
@@ -28,11 +28,11 @@ class DetectedDartSdk implements DartSdk {
 
     if (!executable.contains(s)) {
       if (Platform.isLinux) {
-        executable = new Link("/proc/$pid/exe").resolveSymbolicLinksSync();
+        executable = Link("/proc/$pid/exe").resolveSymbolicLinksSync();
       }
     }
 
-    final file = new File(executable);
+    final file = File(executable);
     if (!file.existsSync()) {
       throw dartSdkNotFound;
     }
@@ -42,11 +42,11 @@ class DetectedDartSdk implements DartSdk {
 
     final String sdkPath = parent.path;
     final String dartApi = "$sdkPath${s}include${s}dart_api.h";
-    if (!new File(dartApi).existsSync()) {
-      throw new Exception('Cannot find Dart SDK!');
+    if (!File(dartApi).existsSync()) {
+      throw Exception('Cannot find Dart SDK!');
     }
 
-    return new DetectedDartSdk(sdkPath);
+    return DetectedDartSdk(sdkPath);
   }
 
   String get dartPath => p.join(sdkPath, 'bin', 'dart');
@@ -61,9 +61,9 @@ class DetectedDartSdk implements DartSdk {
     final ProcessResult res =
         await pub(<String>['get'], workingDir: workingDir);
     if (res.exitCode == 0) {
-      return new PubGetResult(res.stdout);
+      return PubGetResult(res.stdout);
     } else {
-      throw new PubGetException(res.exitCode, res.stdout, res.stderr);
+      throw PubGetException(res.exitCode, res.stdout, res.stderr);
     }
   }
 
@@ -71,7 +71,7 @@ class DetectedDartSdk implements DartSdk {
     final ProcessResult res =
         await Process.run(dartPath, <String>['--version']);
     if (res.exitCode != 0) {
-      throw new Exception('Failed!');
+      throw Exception('Failed!');
     }
     return res.stderr;
   }
@@ -84,7 +84,7 @@ class DetectedDartSdk implements DartSdk {
   }
 }
 
-final Exception dartSdkNotFound = new Exception('Dart SDK not found!');
+final Exception dartSdkNotFound = Exception('Dart SDK not found!');
 
 class DepInfo {
   final String name;
@@ -99,20 +99,20 @@ class PubGetResult {
 
   PubGetResult(this.outlog);
 
-  List<DepInfo> get added => new LineSplitter()
+  List<DepInfo> get added => LineSplitter()
       .convert(outlog)
       .where((String line) => line.startsWith('+ '))
       .map((String line) => line.split(' '))
       .where((List<String> parts) => parts.length == 3)
-      .map((List<String> parts) => new DepInfo(parts[1], parts[2]))
+      .map((List<String> parts) => DepInfo(parts[1], parts[2]))
       .toList();
 
-  List<DepInfo> get removed => new LineSplitter()
+  List<DepInfo> get removed => LineSplitter()
       .convert(outlog)
       .where((String line) => line.startsWith('- '))
       .map((String line) => line.split(' '))
       .where((List<String> parts) => parts.length == 3)
-      .map((List<String> parts) => new DepInfo(parts[1], parts[2]))
+      .map((List<String> parts) => DepInfo(parts[1], parts[2]))
       .toList();
 }
 

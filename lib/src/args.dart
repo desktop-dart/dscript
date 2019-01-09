@@ -38,7 +38,7 @@ class Args {
     bool verbose = false;
     bool deleteProject = true;
     String script;
-    UnmodifiableListView<String> args = new UnmodifiableListView<String>([]);
+    UnmodifiableListView<String> args = UnmodifiableListView<String>([]);
 
     for (int i = 0; i < arguments.length; i++) {
       final String argument = arguments[i];
@@ -46,30 +46,29 @@ class Args {
       if (argument.startsWith('-')) {
         if (argument == '-v' || argument == '--verbose') {
           if (isRedundant.containsKey('-v'))
-            throw new DuplicateOptionsException('--verbose');
+            throw DuplicateOptionsException('--verbose');
           verbose = true;
           isRedundant['-v'] = true;
         } else if (argument == '-k' || argument == '--keep-project') {
           if (isRedundant.containsKey('-k'))
-            throw new DuplicateOptionsException('--keep-project');
+            throw DuplicateOptionsException('--keep-project');
           deleteProject = false;
           isRedundant['-k'] = true;
         } else {
-          throw new UnknownOption(argument);
+          throw UnknownOption(argument);
         }
         continue;
       }
 
       script = argument;
       if (i != (arguments.length - 1)) {
-        args = new UnmodifiableListView<String>(arguments.sublist(i + 1));
+        args = UnmodifiableListView<String>(arguments.sublist(i + 1));
       }
       break;
     }
 
-    if (script == null) throw new Exception('Script not provided!');
+    if (script == null) throw Exception('Script not provided!');
 
-    return new Args(script, args,
-        verbose: verbose, deleteProject: deleteProject);
+    return Args(script, args, verbose: verbose, deleteProject: deleteProject);
   }
 }

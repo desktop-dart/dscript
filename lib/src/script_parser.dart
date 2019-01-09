@@ -13,17 +13,15 @@ enum _State {
 /// Extracts pubspec embedded in dscript
 Future<UnmodifiableListView<String>> extractPubspec(
     String scriptFilename) async {
-  final file = new File(scriptFilename);
+  final file = File(scriptFilename);
 
   if (!file.existsSync()) {
-    throw new Exception('Script file $scriptFilename not found!');
+    throw Exception('Script file $scriptFilename not found!');
   }
 
   // Read script file as lines
-  final Stream<String> lines = await file
-      .openRead()
-      .transform(UTF8.decoder)
-      .transform(new LineSplitter());
+  final Stream<String> lines =
+      await file.openRead().transform(utf8.decoder).transform(LineSplitter());
 
   List<String> pubspec;
   _State state = _State.notFound;
@@ -67,5 +65,5 @@ Future<UnmodifiableListView<String>> extractPubspec(
 
   if (pubspec == null) return null;
 
-  return new UnmodifiableListView<String>(pubspec);
+  return UnmodifiableListView<String>(pubspec);
 }

@@ -24,7 +24,7 @@ class ProjectCreator {
 
   /// If directory named [projectDir] does not exist, create it.
   Future createProjectDir() async {
-    final directory = new Directory(projectDir);
+    final directory = Directory(projectDir);
 
     if (await directory.exists()) {
       return;
@@ -34,20 +34,20 @@ class ProjectCreator {
   }
 
   Future createLibDir() async {
-    final directory = new Directory("lib");
+    final directory = Directory("lib");
 
     if (!await directory.exists()) {
       return;
     }
 
     final String libDirPath = p.join(projectDir, 'lib');
-    final link = new Link(libDirPath);
+    final link = Link(libDirPath);
     await link.create(directory.absolute.path);
   }
 
   Future createPubspec() async {
     final String filePath = p.join(projectDir, "pubspec.yaml");
-    final file = new File(filePath);
+    final file = File(filePath);
     await file.writeAsString(pubspec.join('\n'));
   }
 }

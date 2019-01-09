@@ -22,10 +22,10 @@ class ScriptRunner {
       {this.workingDir, this.tempProjectDir});
 
   Future createProject() async {
-    final creator = new ProjectCreator(tempProjectDir, pubspec);
+    final creator = ProjectCreator(tempProjectDir, pubspec);
     await creator.exec();
 
-    final project = new Project(tempProjectDir);
+    final project = Project(tempProjectDir);
     await project.pubGet(withSdk: sdk);
   }
 
@@ -69,7 +69,7 @@ class ScriptRunner {
     workingDir ??= Directory.current.path;
     tempProjectDir ??= Directory.systemTemp.createTempSync().path;
 
-    return new ScriptRunner._(options, sdk, pubspec,
+    return ScriptRunner._(options, sdk, pubspec,
         workingDir: workingDir, tempProjectDir: tempProjectDir);
   }
 }

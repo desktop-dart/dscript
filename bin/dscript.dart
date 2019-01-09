@@ -7,9 +7,9 @@ main(List<String> arguments) async {
     exit(0);
   }
 
-  final options = new Args.parse(arguments);
+  final options = Args.parse(arguments);
 
-  final DetectedDartSdk sdk = new DartSdk.detect();
+  final DetectedDartSdk sdk = DartSdk.detect();
 
   if (options.verbose) {
     stderr.writeln(
@@ -23,7 +23,7 @@ main(List<String> arguments) async {
       stderr.writeln(
           'dscript: Embedded pubspec not found in script. Providing defualt pubspec');
     }
-    pubspec = new UnmodifiableListView<String>(<String>['name: a_dart_script']);
+    pubspec = UnmodifiableListView<String>(<String>['name: a_dart_script']);
   } else {
     if (options.verbose) {
       stderr.writeln('dscript: Embedded pubspec found in script');
@@ -55,7 +55,7 @@ main(List<String> arguments) async {
       stderr.writeln('dscript: Deleting project');
     }
     try {
-      await new Directory(runner.tempProjectDir).delete(recursive: true);
+      await Directory(runner.tempProjectDir).delete(recursive: true);
     } finally {}
   }
 
