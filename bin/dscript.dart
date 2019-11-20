@@ -7,65 +7,70 @@ void main(List<String> arguments) async {
     exit(0);
   }
 
-  final options = Args.parse(arguments);
+  try {
+    Args options = Args.parse(arguments);
 
-  final DetectedDartSdk sdk = DartSdk.detect() as DetectedDartSdk;
+    final DetectedDartSdk sdk = DartSdk.detect() as DetectedDartSdk;
 
-  if (options.verbose) {
-    stderr.writeln(
-        'dscript: Dart SDK found at ${sdk.sdkPath} with version ${await sdk.version}');
-  }
-
-  UnmodifiableListView<String> pubspec = await extractPubspec(options.script);
-
-  if (pubspec == null || pubspec.isEmpty) {
     if (options.verbose) {
       stderr.writeln(
-          'dscript: Embedded pubspec not found in script. Providing defualt pubspec');
+          'dscript: Dart SDK found at ${sdk.sdkPath} with version ${await sdk.version}');
     }
-    pubspec = UnmodifiableListView<String>(<String>['name: a_dart_script']);
-  } else {
+
+    UnmodifiableListView<String> pubspec = await extractPubspec(options.script);
+
+    if (pubspec == null || pubspec.isEmpty) {
+      if (options.verbose) {
+        stderr.writeln(
+            'dscript: Embedded pubspec not found in script. Providing defualt pubspec');
+      }
+      pubspec = UnmodifiableListView<String>(<String>['name: a_dart_script']);
+    } else {
+      if (options.verbose) {
+        stderr.writeln('dscript: Embedded pubspec found in script');
+      }
+    }
+
+    final ScriptRunner runner = await ScriptRunner.make(options, sdk, pubspec);
+
     if (options.verbose) {
-      stderr.writeln('dscript: Embedded pubspec found in script');
+      stderr.writeln(
+          'dscript: Temporary project path at ${runner.tempProjectDir}');
     }
-  }
 
-  final ScriptRunner runner = await ScriptRunner.make(options, sdk, pubspec);
-
-  if (options.verbose) {
-    stderr
-        .writeln('dscript: Temporary project path at ${runner.tempProjectDir}');
-  }
-
-  try {
-    await runner.createProject();
-  } on PubGetException catch (e) {
-    stderr.writeln(
-        'dscript: Running "pub get" failed with exit code ${e.exitCode}!');
-    if (options.verbose) {
-      stderr.writeln(e.stderr);
-    }
-    exit(1);
-  }
-
-  final int exitCode = await runner.exec();
-
-  if (options.deleteProject) {
-    if (options.verbose) {
-      stderr.writeln('dscript: Deleting project');
-    }
     try {
-      await Directory(runner.tempProjectDir).delete(recursive: true);
-    } finally {}
+      await runner.createProject();
+    } on PubGetException catch (e) {
+      stderr.writeln(
+          'dscript: Running "pub get" failed with exit code ${e.exitCode}!');
+      if (options.verbose) {
+        stderr.writeln(e.stderr);
+      }
+      exit(1);
+    }
+
+    final int exitCode = await runner.exec();
+
+    if (options.deleteProject) {
+      if (options.verbose) {
+        stderr.writeln('dscript: Deleting project');
+      }
+      try {
+        await Directory(runner.tempProjectDir).delete(recursive: true);
+      } finally {}
+    }
+
+    if (options.verbose) {
+      stderr.writeln('dscript: Exiting with code $exitCode');
+    }
+
+    await stderr.flush();
+
+    exit(exitCode);
+  } on ArgsException catch (e) {
+    stderr.writeln(e.toString());
+    exit(-1);
   }
-
-  if (options.verbose) {
-    stderr.writeln('dscript: Exiting with code $exitCode');
-  }
-
-  await stderr.flush();
-
-  exit(exitCode);
 }
 
 const String version = '1.0.2';

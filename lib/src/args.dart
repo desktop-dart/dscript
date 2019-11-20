@@ -1,21 +1,36 @@
 import 'dart:collection';
 
-class OptionsException implements Exception {}
+class ArgsException implements Exception {
+  String toString();
+}
 
-class DuplicateOptionsException implements OptionsException {
+class OptionsException implements ArgsException {}
+
+class DuplicateOptionsException extends OptionsException {
   final String optionName;
 
-  DuplicateOptionsException(this.optionName);
-
-  String toString() => 'Option $optionName used twice!';
+  String message;
+  DuplicateOptionsException(this.optionName)
+      : message = 'Option ${optionName} used twice!';
+  String toString() => message;
 }
 
 class UnknownOption implements OptionsException {
   final String optionName;
+  String message;
 
-  UnknownOption(this.optionName);
+  UnknownOption(this.optionName)
+      : message = 'The option $optionName is unknown!';
 
-  String toString() => 'The option $optionName is unknown!';
+  String toString() => message;
+}
+
+class ScriptNotProvided implements ArgsException {
+  String message;
+
+  ScriptNotProvided() : message = "Script not provided!";
+
+  String toString() => message;
 }
 
 class Args {
@@ -69,7 +84,7 @@ class Args {
       break;
     }
 
-    if (script == null) throw Exception('Script not provided!');
+    if (script == null) throw ScriptNotProvided();
 
     return Args(script, args, verbose: verbose, deleteProject: deleteProject);
   }
