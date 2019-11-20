@@ -31,7 +31,7 @@ class Args {
   final bool deleteProject;
 
   Args(this.script, this.arguments,
-      {this.verbose: false, this.deleteProject: true});
+      {this.verbose = false, this.deleteProject = true});
 
   factory Args.parse(List<String> arguments) {
     final isRedundant = <String, bool>{};
@@ -45,13 +45,15 @@ class Args {
 
       if (argument.startsWith('-')) {
         if (argument == '-v' || argument == '--verbose') {
-          if (isRedundant.containsKey('-v'))
+          if (isRedundant.containsKey('-v')) {
             throw DuplicateOptionsException('--verbose');
+          }
           verbose = true;
           isRedundant['-v'] = true;
         } else if (argument == '-k' || argument == '--keep-project') {
-          if (isRedundant.containsKey('-k'))
+          if (isRedundant.containsKey('-k')) {
             throw DuplicateOptionsException('--keep-project');
+          }
           deleteProject = false;
           isRedundant['-k'] = true;
         } else {
