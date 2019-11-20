@@ -2,14 +2,14 @@ import "dart:io";
 import 'package:dscript/dscript.dart';
 import 'dart:collection';
 
-main(List<String> arguments) async {
+void main(List<String> arguments) async {
   if (probeSubCommands(arguments)) {
     exit(0);
   }
 
   final options = Args.parse(arguments);
 
-  final DetectedDartSdk sdk = DartSdk.detect();
+  final DetectedDartSdk sdk = DartSdk.detect() as DetectedDartSdk;
 
   if (options.verbose) {
     stderr.writeln(
@@ -18,7 +18,7 @@ main(List<String> arguments) async {
 
   UnmodifiableListView<String> pubspec = await extractPubspec(options.script);
 
-  if (pubspec == null || pubspec.length == 0) {
+  if (pubspec == null || pubspec.isEmpty) {
     if (options.verbose) {
       stderr.writeln(
           'dscript: Embedded pubspec not found in script. Providing defualt pubspec');
@@ -87,7 +87,7 @@ void printHelp() {
 }
 
 bool probeSubCommands(List<String> args) {
-  if (args.length == 0) {
+  if (args.isEmpty) {
     print('Version: $version');
     print('');
     printHelp();
