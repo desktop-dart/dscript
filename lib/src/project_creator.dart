@@ -14,7 +14,7 @@ class ProjectCreator {
   Future exec() async {
     await createProjectDir();
 
-    final futures = <Future>[];
+    final List<Future<void>> futures = List();
 
     futures.add(createLibDir());
     futures.add(createPubspec());
@@ -33,7 +33,7 @@ class ProjectCreator {
     await directory.create(recursive: true);
   }
 
-  Future createLibDir() async {
+  Future<void> createLibDir() async {
     final directory = Directory("lib");
 
     if (!await directory.exists()) {
@@ -45,7 +45,7 @@ class ProjectCreator {
     await link.create(directory.absolute.path);
   }
 
-  Future createPubspec() async {
+  Future<void> createPubspec() async {
     final String filePath = p.join(projectDir, "pubspec.yaml");
     final file = File(filePath);
     await file.writeAsString(pubspec.join('\n'));
