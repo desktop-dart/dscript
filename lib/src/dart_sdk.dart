@@ -61,9 +61,10 @@ class DetectedDartSdk implements DartSdk {
     final ProcessResult res =
         await pub(<String>['get'], workingDir: workingDir);
     if (res.exitCode == 0) {
-      return PubGetResult(res.stdout);
+      return PubGetResult(res.stdout as String);
     } else {
-      throw PubGetException(res.exitCode, res.stdout, res.stderr);
+      throw PubGetException(
+          res.exitCode, res.stdout as String, res.stderr as String);
     }
   }
 
@@ -73,7 +74,7 @@ class DetectedDartSdk implements DartSdk {
     if (res.exitCode != 0) {
       throw Exception('Failed!');
     }
-    return res.stderr;
+    return res.stderr as String;
   }
 
   Future<String> get version async {
