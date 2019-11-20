@@ -1,7 +1,7 @@
 name: dscript
 description: Execute standalone Dart shell scripts
 version: 2.0.0
-homepage: https://github.com/tejainece/dscript
+homepage: https://github.com/desktop-dart/dscript
 author: Ravi Teja Gudapati <tejainece@gmail.com>
 
 environment:
