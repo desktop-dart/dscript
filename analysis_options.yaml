@@ -1,10 +1,15 @@
+include: package:pedantic/analysis_options.yaml
+
 analyzer:
-  strong-mode: true
+   strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
 #   exclude:
 #     - path/to/excluded/files/**
 
 # Lint rules and documentation, see http://dart-lang.github.io/linter/lints
 linter:
+  
   rules:
     - cancel_subscriptions
     - hash_and_equals
