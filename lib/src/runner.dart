@@ -33,7 +33,7 @@ class ScriptRunner {
   Future<int> exec() async {
     // Prepare VM arguments
     final vmArgs = <String>[];
-    vmArgs.add("--checked");
+    vmArgs.add("--enable-asserts");
     vmArgs.addAll(["--packages=$tempProjectDir/.packages"]);
     vmArgs.add(options.script);
     vmArgs.addAll(options.arguments);
@@ -52,7 +52,7 @@ class ScriptRunner {
 
     final int exitCode = await process.exitCode;
 
-    final futures = <Future>[];
+    final List<Future<void>> futures = List();
 
     futures.add(stderrSub.cancel());
     futures.add(stdoutSub.cancel());
